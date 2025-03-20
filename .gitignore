@@ -28,3 +28,5 @@ ENV/
 # Local development settings
 .DS_Store
 articles/
+data/
+logs
