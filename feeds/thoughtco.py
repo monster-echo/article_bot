@@ -5,7 +5,7 @@ from dateutil import parser
 
 class ThoughtcoFeed(FeedBase):
     url = "https://rsshub.0x2a.top/thoughtco/computer-science-4133486"
-    interval = 30  # 可以针对每个 feed 设置不同的抓取间隔
+    interval = 60  # 可以针对每个 feed 设置不同的抓取间隔
 
     def parse_articles(self, response_text):
         root = ET.fromstring(response_text)

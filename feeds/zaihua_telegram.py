@@ -7,7 +7,7 @@ class ZaiHuaTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "ZaihuaNews"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -19,7 +19,7 @@ class JiKeCollectionTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "jike-collection"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -31,7 +31,7 @@ class YummyTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "GodlyNews1"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -43,7 +43,7 @@ class AiArtMidjourneyTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "ai_art_beauty_image_midjourney"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -55,7 +55,7 @@ class NewlearnerTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "NewlearnerChannel"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -67,7 +67,7 @@ class XhsypTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "xhsyp"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -79,7 +79,7 @@ class CEObserveTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "CE_Observe"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -91,7 +91,7 @@ class MiaoaaaaaTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "miaoaaaaa"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -103,7 +103,7 @@ class MightyflameTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "mightyflame"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -115,7 +115,7 @@ class PodcastEnglishListeningTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "Podcast_English_listening"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -127,7 +127,7 @@ class AiPostTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "aipost"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -139,7 +139,7 @@ class ProgrammerJokesMemesTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "Programmer_Jokes_Memes"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -151,7 +151,7 @@ class ZhihuBazaarTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "zhihu_bazaar"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -163,7 +163,7 @@ class Txwl666TelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "txwl666"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -175,7 +175,7 @@ class WxbygTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "wxbyg"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -187,7 +187,7 @@ class LinuxgramTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "linuxgram"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -199,7 +199,7 @@ class QuotesFactsEnglishMotivationTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "Quotes_Facts_English_Motivation"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -211,7 +211,7 @@ class SolidotTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "solidot"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -223,7 +223,7 @@ class WoshadiaoTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "woshadiao"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -235,7 +235,7 @@ class ThehackernewsTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "thehackernews"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -247,7 +247,7 @@ class AbskoopTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "abskoop"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
@@ -259,10 +259,11 @@ class ProgrammingTipTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "ProgrammingTip"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
+
 
 class WeeklyBooksTelegramFeed(TelegramChannelFeedBase):
     """
@@ -270,10 +271,11 @@ class WeeklyBooksTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "weekly_books"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)
+
 
 class QumaoTelegramFeed(TelegramChannelFeedBase):
     """
@@ -281,7 +283,7 @@ class QumaoTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "qumao"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)

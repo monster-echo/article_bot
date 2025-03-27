@@ -11,7 +11,7 @@ class MeetGPTTelegramFeed(TelegramChannelFeedBase):
     """
 
     channel_name = "meet_chatgpt"
-    interval = 30
+    interval = 60
 
     def __init__(self):
         super().__init__(self.channel_name)

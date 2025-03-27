@@ -35,6 +35,9 @@ class ArticleStorage:
             self.storage_root_dir, datetime.today().strftime("%Y-%m-%d")
         )
 
+        if not os.path.exists(today_dir):
+            os.makedirs(today_dir)
+
         filename = f"{article.source}-{uuid.uuid5(uuid.NAMESPACE_URL, article.article_id).hex[:6]}.json"
         filepath = os.path.join(today_dir, filename)
 

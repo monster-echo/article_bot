@@ -2,6 +2,7 @@ import logging
 import logging.handlers
 from apscheduler.schedulers.blocking import BlockingScheduler
 import os
+from bots import add_bots
 from feeds import add_feeds
 
 scheduler = BlockingScheduler()
@@ -45,6 +46,7 @@ if __name__ == "__main__":
     try:
         # 初始化所有 feed 任务
         add_feeds(scheduler)
+        add_bots(scheduler)
 
         # 启动调度器
         scheduler.start()
