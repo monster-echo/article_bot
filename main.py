@@ -4,6 +4,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import os
 from bots import add_bots
 from feeds import add_feeds
+from transforms import add_transforms
 
 scheduler = BlockingScheduler()
 
@@ -45,8 +46,9 @@ if __name__ == "__main__":
     logger.info("新闻采集器启动")
     try:
         # 初始化所有 feed 任务
-        add_feeds(scheduler)
-        add_bots(scheduler)
+        # add_feeds(scheduler)
+        add_transforms(scheduler)
+        # add_bots(scheduler)
 
         # 启动调度器
         scheduler.start()

@@ -20,15 +20,19 @@ class Article(BaseModel):
     source: str = ""  # 来源feed名称
 
 
+# 创建一个共享的 ArticleStorage 实例
+_shared_storage = ArticleStorage()
+
+
 class FeedBase:
     url = None
     interval = 60
+    storage = _shared_storage  # 作为类属性，所有子类共享
 
     def __init__(self):
         if not self.url:
             raise ValueError(f"{self.__class__.__name__} must set url attribute")
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.storage = ArticleStorage()
 
     def fetch_data(self):
         """获取并解析feed数据"""
