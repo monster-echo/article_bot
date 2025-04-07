@@ -2,9 +2,8 @@ import logging
 import logging.handlers
 from apscheduler.schedulers.blocking import BlockingScheduler
 import os
-from bots import add_bots
-from feeds import add_feeds
-from transforms import add_transforms
+from translations.base import TranslationBase
+from utils.jobs import add_jobs
 
 scheduler = BlockingScheduler()
 
@@ -18,7 +17,7 @@ def config_logger():
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     # 设置日志文件名
-    file_name = os.path.join(log_dir, "article_bot.log")
+    file_name = os.path.join(log_dir, "article_job.log")
 
     # 正确设置日志回滚配置，使用 suffix 参数
     file_handler = logging.handlers.TimedRotatingFileHandler(
@@ -45,10 +44,11 @@ logger = config_logger()
 if __name__ == "__main__":
     logger.info("新闻采集器启动")
     try:
-        # 初始化所有 feed 任务
-        # add_feeds(scheduler)
-        add_transforms(scheduler)
-        # add_bots(scheduler)
+        add_jobs(
+            scheduler,
+            "translations",
+            TranslationBase,
+        )
 
         # 启动调度器
         scheduler.start()

@@ -1,20 +1,19 @@
+from datetime import datetime, timedelta
+import importlib
 import logging
 import pkgutil
-import importlib
-from datetime import datetime, timedelta
-from bots.base import BotBase
 
 
-def import_submodules():
-    """导入 bots 包下的所有模块"""
-    package = importlib.import_module("bots")
+def import_submodules(module):
+    """导入 module 包下的所有模块"""
+    package = importlib.import_module(module)
     for _, name, _ in pkgutil.iter_modules(package.__path__):
-        importlib.import_module(f"bots.{name}")
+        importlib.import_module(f"{module}.{name}")
 
 
-def add_bots(scheduler, stagger_start=True, initial_delay=0):
+def add_jobs(scheduler, module, base_type, stagger_start=True, initial_delay=0):
     """
-    查找并添加所有 BotBase 的子类到调度器
+    查找并添加所有 JobBase 的子类到调度器
 
     Args:
         scheduler: APScheduler 调度器实例
@@ -24,9 +23,9 @@ def add_bots(scheduler, stagger_start=True, initial_delay=0):
     logger = logging.getLogger(__name__)
 
     # 确保所有模块都已导入
-    import_submodules()
+    import_submodules(module)
 
-    # 获取所有 BotBase 的子类(排除BotBase)
+    # 获取所有 JobBase 的子类(排除JobBase)
     def get_all_subclasses(cls):
         subclasses = set()
         for subclass in cls.__subclasses__():
@@ -34,12 +33,12 @@ def add_bots(scheduler, stagger_start=True, initial_delay=0):
             subclasses.update(get_all_subclasses(subclass))
         return subclasses
 
-    bot_classes = [cls for cls in get_all_subclasses(BotBase) if cls not in [BotBase]]
+    classes = [cls for cls in get_all_subclasses(base_type) if cls not in [base_type]]
 
-    for idx, bot_class in enumerate(bot_classes):
+    for idx, _class in enumerate(classes):
         try:
-            bot = bot_class()
-            name = bot_class.__name__.lower().replace("bot", "")
+            instance = _class()
+            name = _class.__name__.lower()
 
             start_time = datetime.now()
             if stagger_start:
@@ -47,17 +46,17 @@ def add_bots(scheduler, stagger_start=True, initial_delay=0):
                 logger.info(f"调度错开时间 {name}: {start_time}")
 
             scheduler.add_job(
-                func=bot.run,
+                func=instance.run,
                 trigger="interval",
-                seconds=bot.interval,
+                seconds=instance.interval,
                 next_run_time=start_time,
-                id=f"{name}_bot",
-                name=f"{name} bot",
+                id=f"{name}",
+                name=f"{name}",
                 max_instances=1,
                 misfire_grace_time=60,
             )
-            logger.info(f"Successfully added bot: {name}, next run at {start_time}")
+            logger.info(f"Successfully added job: {name}, next run at {start_time}")
 
         except Exception as e:
-            logger.error(f"Failed to add bot {bot_class.__name__}: {str(e)}")
+            logger.error(f"Failed to add job {_class.__name__}: {str(e)}")
             continue
