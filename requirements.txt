@@ -3,3 +3,4 @@ dotenv
 requests
 APScheduler
 langchain-ollama
+langchain_deepseek
