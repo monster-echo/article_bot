@@ -10,6 +10,8 @@ import hashlib
 import base64
 from urllib.parse import urlparse
 
+from config import AISTUDIOX_API_URL
+
 # 设置日志
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -314,13 +316,18 @@ def process_article_content(content, image_urls=None):
     # 替换图片URL
     for old_url in image_urls:
         try:
+            download_url = old_url
             # 跳过已经是微信域名的图片
-            if "mmbiz.qpic.cn" in old_url:
-                logger.info(f"跳过已经是微信域名的图片: {old_url}")
+            if "mmbiz.qpic.cn" in download_url:
+                logger.info(f"跳过已经是微信域名的图片: {download_url}")
                 continue
 
+            if download_url.startswith("/api/oss"):
+                # 处理OSS图片
+                download_url = f"{AISTUDIOX_API_URL}{old_url}"
+
             # 上传图片到微信服务器
-            new_url = upload_image(old_url)
+            new_url = upload_image(download_url)
 
             # 替换URL
             content = content.replace(old_url, new_url)

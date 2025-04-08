@@ -11,7 +11,7 @@ class AIPostTranslation(TranslationBase):
 
     interval = 60 * 5  # 5 minutes
 
-    get_posts_url = f"{AISTUDIOX_API_URL}/api/posts?page=1&pageSize=10&source=AI%20Post%20—%20Artificial%20Intelligence&tags=&status=draft"
+    get_posts_url = f"{AISTUDIOX_API_URL}/api/posts?page=1&pageSize=10&tags=&status=draft&sources=Digital%20Dreams%20::%20All%20About%20Generative%20AI,AI%20Post%20—%20Artificial%20Intelligence,Linuxgram%20🐧"
     put_posts_url = f"{AISTUDIOX_API_URL}/api/posts"
 
     def run(self):

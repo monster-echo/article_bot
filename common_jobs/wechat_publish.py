@@ -83,10 +83,12 @@ class WechatJob(CommonJobBase):
                 if response.json()["photos"]
                 else None
             )
+        else:
+            # 直接使用已有的图片
+            thumb_url = f"{AISTUDIOX_API_URL}/api/oss?ossKey={thumb_url}"
 
         try:
             result = publish_article(title, content, author, thumb_url=thumb_url)
-            self.logger.info(f"文章 {title} 发布成功")
             put_posts_url = f"{AISTUDIOX_API_URL}/api/posts"
 
             json = {
