@@ -2,6 +2,7 @@ import logging
 import logging.handlers
 from apscheduler.schedulers.blocking import BlockingScheduler
 import os
+from common_jobs.base import CommonJobBase
 from translations.base import TranslationBase
 from utils.jobs import add_jobs
 
@@ -48,6 +49,12 @@ if __name__ == "__main__":
             scheduler,
             "translations",
             TranslationBase,
+        )
+
+        add_jobs(
+            scheduler,
+            "common_jobs",
+            CommonJobBase,
         )
 
         # 启动调度器
