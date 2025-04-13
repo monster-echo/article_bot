@@ -386,10 +386,10 @@ def publish_article(
             thumb_media_id=thumb_media_id,
         )
 
-        # 发布草稿
-        publish_id = publish_draft(media_id)
+        # # 发布草稿
+        # publish_id = publish_draft(media_id)
 
-        return {"success": True, "media_id": media_id, "publish_id": publish_id}
+        return {"success": True, "media_id": media_id, "publish_id": None}
     except Exception as e:
         logger.error(f"发布文章失败: {str(e)}")
         return {"success": False, "error": str(e)}
