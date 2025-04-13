@@ -33,7 +33,7 @@ class WechatJob(CommonJobBase):
         """
         Run the Wechat job.
         """
-        get_pending_posts_url = f"{AISTUDIOX_API_URL}/api/posts?wechatStatus=pending"
+        get_pending_posts_url = f"{AISTUDIOX_API_URL}/api/posts?wechatStatus=pending&includeWechatPublish=true"
         response = requests.get(get_pending_posts_url)
         response.raise_for_status()
 
