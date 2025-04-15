@@ -45,12 +45,6 @@ logger = config_logger()
 if __name__ == "__main__":
     logger.info("新闻采集器启动")
     try:
-        # add_jobs(
-        #     scheduler,
-        #     "translations",
-        #     TranslationBase,
-        # )
-
         add_jobs(
             scheduler,
             "common_jobs",
