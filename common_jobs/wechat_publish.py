@@ -56,6 +56,8 @@ class WechatJob(CommonJobBase):
             self.publish(post)
 
     def publish(self, post):
+        id = post["id"]
+        self.logger.info(f"开始发布文章 {id}")
         title = post["translations"][0]["title"]
         content = post["wechatPublish"]["content"]
         author = "echo072"
@@ -98,9 +100,9 @@ class WechatJob(CommonJobBase):
             # 直接使用已有的图片
             thumb_url = f"{AISTUDIOX_API_URL}/api/oss?ossKey={thumb_url}"
 
+        put_posts_url = f"{AISTUDIOX_API_URL}/api/posts/{id}"
         try:
             result = publish_article(title, content, author, thumb_url=thumb_url)
-            put_posts_url = f"{AISTUDIOX_API_URL}/api/posts"
             if not result["success"]:
                 raise Exception(result["error"])
             json = {
@@ -128,7 +130,6 @@ class WechatJob(CommonJobBase):
                 self.logger.info(f"文章 {title} 更新状态成功")
             else:
                 self.logger.error(f"文章 {title} 发布失败: {result['error']}")
-                put_posts_url = f"{AISTUDIOX_API_URL}/api/posts"
                 response = requests.put(
                     put_posts_url,
                     json={
@@ -143,7 +144,6 @@ class WechatJob(CommonJobBase):
                 self.logger.info(f"文章 {title} 更新状态失败")
         except Exception as e:
             self.logger.error(f"文章 {title} 发布失败: {e}")
-            put_posts_url = f"{AISTUDIOX_API_URL}/api/posts"
             response = requests.put(
                 put_posts_url,
                 json={

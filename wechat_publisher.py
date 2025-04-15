@@ -370,7 +370,7 @@ def publish_article(
             try:
                 thumb_media_id = upload_material(thumb_url)
             except Exception as e:
-                logger.warning(f"上传封面图片失败，将使用默认封面: {str(e)}")
+                raise Exception(f"上传封面图片失败，将使用默认封面: {str(e)}")
 
         # 处理文章内容中的图片
         if process_images:
