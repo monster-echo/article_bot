@@ -20,5 +20,5 @@ class CommonJobBase:
         )
 
     @abstractmethod
-    def run(self):
+    async def run(self):
         raise NotImplementedError("Subclasses must implement this method.")

@@ -1,12 +1,10 @@
+import asyncio
 import logging
 import logging.handlers
-from apscheduler.schedulers.blocking import BlockingScheduler
 import os
+from common_jobs.ag_article import AgArticleJob
 from common_jobs.base import CommonJobBase
-from translations.base import TranslationBase
 from utils.jobs import add_jobs
-
-scheduler = BlockingScheduler()
 
 
 def config_logger():
@@ -45,20 +43,7 @@ logger = config_logger()
 if __name__ == "__main__":
     logger.info("新闻采集器启动")
     try:
-        # add_jobs(
-        #     scheduler,
-        #     "translations",
-        #     TranslationBase,
-        # )
-
-        add_jobs(
-            scheduler,
-            "common_jobs",
-            CommonJobBase,
-        )
-
-        # 启动调度器
-        scheduler.start()
+        job = AgArticleJob()
+        asyncio.run(job.run())
     except (KeyboardInterrupt, SystemExit):
         logger.info("新闻采集器退出")
-        scheduler.shutdown()
