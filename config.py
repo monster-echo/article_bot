@@ -14,6 +14,7 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 
 AISTUDIOX_API_URL = os.getenv("AISTUDIOX_API_URL", "https://aistudiox.com/api")
 EDGE_AISHUOHUA_URL = os.getenv("EDGE_AISHUOHUA_URL", "https://edge.aishuohua.art")
+SEARXNG_API_URL = os.getenv("SEARXNG_API_URL", "https://searxng.aishuohua.art")
 
 if not MOONSHOT_API_KEY:
     raise ValueError("请设置MOONSHOT_API_KEY环境变量")

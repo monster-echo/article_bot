@@ -6,3 +6,4 @@ langchain-ollama
 langchain_deepseek
 autogen_agentchat
 autogen_ext[openai]
+bs4

@@ -15,7 +15,7 @@ import os
 import time
 from bs4 import BeautifulSoup
 from common_jobs.base import CommonJobBase
-from config import AISTUDIOX_API_URL, EDGE_AISHUOHUA_URL
+from config import AISTUDIOX_API_URL, EDGE_AISHUOHUA_URL, SEARXNG_API_URL
 
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(TRACE_LOGGER_NAME)
@@ -25,7 +25,7 @@ logger.setLevel(logging.DEBUG)
 
 def google_search(query: str, num_results: int = 2, max_chars: int = 500):
 
-    url = "http://192.168.1.117:8081/search"
+    url = f"{SEARXNG_API_URL}/search"
 
     print(f"Searching for: {query}")
     params = {
