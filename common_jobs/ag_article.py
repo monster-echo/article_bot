@@ -223,6 +223,7 @@ async def ag_format_article(article):
     )
 
     async for message in team.run_stream(task=json.dumps(article, ensure_ascii=False)):
+        print(f"Message from {message.source}: {message.content}")
         if message.source == "report_agent":
             content = message.content
             regex = r"```json(.*)```"
@@ -236,6 +237,7 @@ async def ag_format_article(article):
 
 def get_drafts():
     get_drafts_url = f"{AISTUDIOX_API_URL}/api/drafts?authors=zaihuanews,linuxgram,xhqcankao,AI_Best_Tools,GodlyNews1"
+    print(f"Fetching drafts from {get_drafts_url}")
     response = requests.get(get_drafts_url)
     response.raise_for_status()
     data = response.json()
@@ -257,11 +259,13 @@ class AgArticleJob(CommonJobBase):
 
     async def run(self):
         drafts = get_drafts()
+        self.logger.info(f"Found {len(drafts)} drafts to process.")
         if not drafts:
             self.logger.info("No new articles found.")
             return
 
         for draft in drafts:
+            self.logger.info(f"Processing draft {draft['id']}")
             id = draft["id"]
             content = draft["data"]
             article = await ag_format_article(content)

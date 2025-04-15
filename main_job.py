@@ -44,7 +44,7 @@ logger = config_logger()
 if __name__ == "__main__":
     logger.info("新闻采集器启动")
     try:
-        job = WechatJob()
+        job = AgArticleJob()
         asyncio.run(job.run())
     except (KeyboardInterrupt, SystemExit):
         logger.info("新闻采集器退出")
