@@ -334,6 +334,7 @@ def process_article_content(content, image_urls=None):
             logger.info(f"图片URL已替换: {old_url} -> {new_url}")
         except Exception as e:
             logger.warning(f"处理图片 {old_url} 失败，保留原URL: {str(e)}")
+            raise
 
     return content
 
