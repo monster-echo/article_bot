@@ -259,6 +259,15 @@ def rewrite_article(draft_id, article):
     return article
 
 
+def remove_draft(draft_id):
+    remove_draft_url = f"{AISTUDIOX_API_URL}/api/drafts/{draft_id}"
+    logger.info(f"开始删除草稿: {remove_draft_url}")
+    response = requests.delete(remove_draft_url)
+    response.raise_for_status()
+    logger.info(f"草稿删除成功: {draft_id}")
+    return True
+
+
 class AgArticleJob(CommonJobBase):
     interval = 60 * 5  # 5 minutes
 
@@ -273,6 +282,10 @@ class AgArticleJob(CommonJobBase):
             self.logger.info(f"草稿内容: {draft}")
             id = draft["id"]
             content = draft["data"]
-            article = await ag_format_article(content)
-            rewrite_article(id, article)
-            self.logger.info(f"Article {id} formatted successfully.")
+            try:
+                article = await ag_format_article(content)
+                rewrite_article(id, article)
+                self.logger.info(f"Article {id} formatted successfully.")
+            except Exception as e:
+                self.logger.error(f"Error formatting article {id}: {e}")
+                remove_draft(id)
