@@ -114,13 +114,6 @@ class WechatJob(CommonJobBase):
                 },
             }
 
-            if not post["title"]:
-                json["title"] = title
-            if not post["mediaFiles"]:
-                json["mediaFiles"] = [
-                    thumb_url,
-                ]
-
             if result["success"]:
                 response = requests.put(
                     put_posts_url,
