@@ -10,9 +10,10 @@ from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core.tools import FunctionTool
 from autogen_core import TRACE_LOGGER_NAME
 import logging
-
 import requests
-
+import os
+import time
+from bs4 import BeautifulSoup
 from common_jobs.base import CommonJobBase
 from config import AISTUDIOX_API_URL, EDGE_AISHUOHUA_URL
 
@@ -23,11 +24,6 @@ logger.setLevel(logging.DEBUG)
 
 
 def google_search(query: str, num_results: int = 2, max_chars: int = 500):
-    import os
-    import time
-
-    import requests
-    from bs4 import BeautifulSoup
 
     url = "http://192.168.1.117:8081/search"
 
@@ -37,15 +33,19 @@ def google_search(query: str, num_results: int = 2, max_chars: int = 500):
         "format": "json",
     }
 
+    logger.info(f"开始搜索: {query}")
     response = requests.get(url, params=params)
 
     if response.status_code != 200:
         print(response.json())
+        logger.error(
+            f"API request failed with status code: {response.status_code}, response: {response.text}"
+        )
         raise Exception(f"Error in API request: {response.status_code}")
 
     results = response.json().get("results", [])
 
-    print(f"Found {len(results)} results")
+    logger.info(f"找到 {len(results)} 个结果")
 
     def get_page_content(url: str) -> str:
         try:
@@ -61,6 +61,7 @@ def google_search(query: str, num_results: int = 2, max_chars: int = 500):
             return content.strip()
         except Exception as e:
             print(f"Error fetching {url}: {str(e)}")
+            logger.error(f"Error fetching {url}: {str(e)}")
             return ""
 
     enriched_results = []
@@ -68,7 +69,7 @@ def google_search(query: str, num_results: int = 2, max_chars: int = 500):
         if not item.get("url"):
             continue
         body = get_page_content(item["url"])
-        print(f"Fetched content from {item['url']}: {len(body)} characters")
+        logger.info(f"获取到页面内容: {body}")
         enriched_results.append(
             {
                 "title": item["title"],
@@ -84,7 +85,7 @@ def google_search(query: str, num_results: int = 2, max_chars: int = 500):
 
 def cover_image(prompt: str):
     url = f"{EDGE_AISHUOHUA_URL}/api/comfy?prompt={prompt}"
-
+    logger.info(f"开始生成封面图: {prompt}")
     response = requests.get(url)
     response.raise_for_status()
 
@@ -223,8 +224,9 @@ async def ag_format_article(article):
     )
 
     async for message in team.run_stream(task=json.dumps(article, ensure_ascii=False)):
-        print(f"Message from {message.source}: {message.content}")
+        logger.info(f"消息来自 {message.source}: {message.content}")
         if message.source == "report_agent":
+            logger.info(f"报告内容: {message.content}")
             content = message.content
             regex = r"```json(.*)```"
             match = re.search(regex, content, re.DOTALL)
@@ -237,7 +239,7 @@ async def ag_format_article(article):
 
 def get_drafts():
     get_drafts_url = f"{AISTUDIOX_API_URL}/api/drafts?authors=zaihuanews,linuxgram,xhqcankao,AI_Best_Tools,GodlyNews1"
-    print(f"Fetching drafts from {get_drafts_url}")
+    logger.info(f"开始获取草稿: {get_drafts_url}")
     response = requests.get(get_drafts_url)
     response.raise_for_status()
     data = response.json()
@@ -246,12 +248,15 @@ def get_drafts():
 
 def rewrite_article(draft_id, article):
     create_article_url = f"{AISTUDIOX_API_URL}/api/drafts/{draft_id}/rewrite"
+    logger.info(f"开始重写文章: {create_article_url}")
     response = requests.post(
         create_article_url,
         json=article,
     )
     response.raise_for_status()
-    return response.json()
+    article = response.json()
+    logger.info(f"重写文章成功: {article}")
+    return article
 
 
 class AgArticleJob(CommonJobBase):
@@ -265,7 +270,7 @@ class AgArticleJob(CommonJobBase):
             return
 
         for draft in drafts:
-            self.logger.info(f"Processing draft {draft['id']}")
+            self.logger.info(f"草稿内容: {draft}")
             id = draft["id"]
             content = draft["data"]
             article = await ag_format_article(content)
