@@ -4,6 +4,7 @@ import logging.handlers
 import os
 from common_jobs.ag_article import AgArticleJob
 from common_jobs.base import CommonJobBase
+from common_jobs.wechat_publish import WechatJob
 from utils.jobs import add_jobs
 
 
@@ -43,7 +44,7 @@ logger = config_logger()
 if __name__ == "__main__":
     logger.info("新闻采集器启动")
     try:
-        job = AgArticleJob()
+        job = WechatJob()
         asyncio.run(job.run())
     except (KeyboardInterrupt, SystemExit):
         logger.info("新闻采集器退出")

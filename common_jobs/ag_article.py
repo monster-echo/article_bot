@@ -14,7 +14,7 @@ import logging
 import requests
 
 from common_jobs.base import CommonJobBase
-from config import AISTUDIOX_API_URL
+from config import AISTUDIOX_API_URL, EDGE_AISHUOHUA_URL
 
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(TRACE_LOGGER_NAME)
@@ -83,7 +83,7 @@ def google_search(query: str, num_results: int = 2, max_chars: int = 500):
 
 
 def cover_image(prompt: str):
-    url = f"https://edge.aishuohua.art/api/comfy?prompt={prompt}"
+    url = f"{EDGE_AISHUOHUA_URL}/api/comfy?prompt={prompt}"
 
     response = requests.get(url)
     response.raise_for_status()

@@ -22,6 +22,19 @@ PEXEL_SYSTEM_PROMPT = """
 """
 
 
+def get_pending_posts():
+    """
+    获取待发布的文章列表
+    """
+    get_pending_posts_url = (
+        f"{AISTUDIOX_API_URL}/api/posts?wechatStatus=pending&includeWechatPublish=true"
+    )
+    response = requests.get(get_pending_posts_url)
+    response.raise_for_status()
+    data = response.json()
+    return data["items"] if data["items"] else None
+
+
 class WechatJob(CommonJobBase):
     """
     Wechat job class.
@@ -29,34 +42,32 @@ class WechatJob(CommonJobBase):
 
     interval = 60 * 5  # 5 minutes
 
-    def run(self):
+    async def run(self):
         """
         Run the Wechat job.
         """
-        get_pending_posts_url = f"{AISTUDIOX_API_URL}/api/posts?wechatStatus=pending&includeWechatPublish=true"
-        response = requests.get(get_pending_posts_url)
-        response.raise_for_status()
-
-        data = response.json()
-        if not data["posts"]:
+        posts = get_pending_posts()
+        if not posts:
             self.logger.info("No new articles found.")
             return
+        self.logger.info(f"发现 {len(posts)} 篇新文章")
 
-        self.logger.info(f"发现 {len(data['posts'])} 篇新文章")
-
-        for post in data["posts"]:
+        for post in posts:
             self.publish(post)
 
     def publish(self, post):
-        title = post["title"]
-        markdown_content = post["content"]
+        title = post["translations"][0]["title"]
         content = post["wechatPublish"]["content"]
         author = "echo072"
-        thumb_url = post["mediaFiles"][0] if len(post["mediaFiles"]) > 0 else None
+        thumb_url = (
+            post["translations"][0]["mediaFiles"][0]
+            if len(post["translations"][0]["mediaFiles"]) > 0
+            else post["translations"][0]["cover"]
+        )
 
         if not title:
             title = self.llm.invoke(
-                SYSTEM_PROMPT.format(content=markdown_content),
+                SYSTEM_PROMPT.format(content=content),
             ).content
 
             # 删除 title 开头和末尾的 ' 或 "
@@ -90,7 +101,8 @@ class WechatJob(CommonJobBase):
         try:
             result = publish_article(title, content, author, thumb_url=thumb_url)
             put_posts_url = f"{AISTUDIOX_API_URL}/api/posts"
-
+            if not result["success"]:
+                raise Exception(result["error"])
             json = {
                 "id": post["id"],
                 "wechatPublish": {

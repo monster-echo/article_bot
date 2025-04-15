@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import importlib
 import logging
 import pkgutil
+import asyncio
 
 
 def import_submodules(module):
@@ -46,7 +47,7 @@ def add_jobs(scheduler, module, base_type, stagger_start=True, initial_delay=0):
                 logger.info(f"调度错开时间 {name}: {start_time}")
 
             scheduler.add_job(
-                func=instance.run,
+                func=lambda: asyncio.run(instance.run()),
                 trigger="interval",
                 seconds=instance.interval,
                 next_run_time=start_time,
