@@ -398,20 +398,22 @@ def publish_article(
 
 def main():
     """测试函数"""
-    title = "测试文章标题"
-    content = """
-    <h1>这是一篇测试文章</h1>
-    <p>这是文章内容，支持HTML格式。</p>
-    <p>您可以在这里添加<strong>格式化</strong>的内容。</p>
-    """
-    author = "Echo072"
-    digest = "这是一篇测试文章的摘要"
-    thumb_url = "https://www.aistudiox.design/api/oss?ossKey=db9c7bc7/photo_2025-04-07_14-00-02.jpg"  # 测试封面图
+    # title = "测试文章标题"
+    # content = """
+    # <h1>这是一篇测试文章</h1>
+    # <p>这是文章内容，支持HTML格式。</p>
+    # <p>您可以在这里添加<strong>格式化</strong>的内容。</p>
+    # """
+    # author = "Echo072"
+    # digest = "这是一篇测试文章的摘要"
+    # thumb_url = "https://www.aistudiox.design/api/oss?ossKey=db9c7bc7/photo_2025-04-07_14-00-02.jpg"  # 测试封面图
 
-    result = publish_article(
-        title=title, content=content, author=author, digest=digest, thumb_url=thumb_url
-    )
-    print(result)
+    # result = publish_article(
+    #     title=title, content=content, author=author, digest=digest, thumb_url=thumb_url
+    # )
+    # print(result)
+
+    access_token = get_access_token()
 
 
 if __name__ == "__main__":

@@ -17,10 +17,7 @@ from bs4 import BeautifulSoup
 from common_jobs.base import CommonJobBase
 from config import AISTUDIOX_API_URL, EDGE_AISHUOHUA_URL, SEARXNG_API_URL
 
-logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(TRACE_LOGGER_NAME)
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
 
 
 def google_search(query: str, num_results: int = 2, max_chars: int = 500):
@@ -273,9 +270,9 @@ class AgArticleJob(CommonJobBase):
 
     async def run(self):
         drafts = get_drafts()
-        self.logger.info(f"Found {len(drafts)} drafts to process.")
+        self.logger.info(f"草稿数量: {len(drafts)}")
         if not drafts:
-            self.logger.info("No new articles found.")
+            self.logger.info("没有新草稿.")
             return
 
         for draft in drafts:
@@ -285,7 +282,7 @@ class AgArticleJob(CommonJobBase):
             try:
                 article = await ag_format_article(content)
                 rewrite_article(id, article)
-                self.logger.info(f"Article {id} formatted successfully.")
+                self.logger.info(f"文章 {id} 重写成功.")
             except Exception as e:
-                self.logger.error(f"Error formatting article {id}: {e}")
+                self.logger.error(f"重写文章失败 {id}:  {e}")
                 remove_draft(id)

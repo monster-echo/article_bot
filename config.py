@@ -1,12 +1,15 @@
 import os
 from dotenv import load_dotenv
+import logging
+
+logger = logging.getLogger(__name__)
 
 if os.getenv("PROD"):
     load_dotenv(".env.prod")
-    print("加载生产环境配置")
+    logger.info("加载生产环境配置")
 else:
     load_dotenv()
-    print("加载开发环境配置")
+    logger.info("加载开发环境配置")
 
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com")
 MOONSHOT_API_KEY = os.getenv("MOONSHOT_API_KEY")

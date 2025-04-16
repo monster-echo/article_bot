@@ -2,8 +2,8 @@ import logging
 import logging.handlers
 from apscheduler.schedulers.blocking import BlockingScheduler
 import os
-from common_jobs.base import CommonJobBase
 from utils.jobs import add_jobs
+from common_jobs import job_types
 
 scheduler = BlockingScheduler()
 
@@ -44,12 +44,7 @@ logger = config_logger()
 if __name__ == "__main__":
     logger.info("新闻采集器启动")
     try:
-        add_jobs(
-            scheduler,
-            "common_jobs",
-            CommonJobBase,
-        )
-
+        add_jobs(scheduler, job_types)
         # 启动调度器
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
