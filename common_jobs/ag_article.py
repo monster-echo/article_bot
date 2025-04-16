@@ -235,7 +235,12 @@ async def ag_format_article(article):
 
 
 def get_drafts():
-    get_drafts_url = f"{AISTUDIOX_API_URL}/api/drafts?authors=zaihuanews,linuxgram,xhqcankao,AI_Best_Tools,GodlyNews1"
+    authors = os.getenv(
+        "ARTICLE_FILTER_AUTHORS",
+        "zaihuanews,linuxgram,xhqcankao,AI_Best_Tools,GodlyNews1",
+    )
+
+    get_drafts_url = f"{AISTUDIOX_API_URL}/api/drafts?authors={authors}"
     logger.info(f"开始获取草稿: {get_drafts_url}")
     response = requests.get(get_drafts_url)
     response.raise_for_status()
