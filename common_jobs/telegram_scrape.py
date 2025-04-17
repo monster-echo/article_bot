@@ -84,6 +84,9 @@ class TelegramScrapeJob(CommonJobBase):
                 else channel_entity.username
             )
 
+            if hasattr(channel_username, "username"):
+                channel_username = channel_username.username
+
             # 查找是否存在相同 grouped_id 的消息
             found_message = (
                 next(
