@@ -44,28 +44,11 @@ def google_search(query: str, num_results: int = 2, max_chars: int = 500):
 
     logger.info(f"找到 {len(results)} 个结果")
 
-    def get_page_content(url: str) -> str:
-        try:
-            response = requests.get(url, timeout=10)
-            soup = BeautifulSoup(response.content, "html.parser")
-            text = soup.get_text(separator=" ", strip=True)
-            words = text.split()
-            content = ""
-            for word in words:
-                if len(content) + len(word) + 1 > max_chars:
-                    break
-                content += " " + word
-            return content.strip()
-        except Exception as e:
-            print(f"Error fetching {url}: {str(e)}")
-            logger.error(f"Error fetching {url}: {str(e)}")
-            return ""
-
     enriched_results = []
     for item in results[:num_results]:
         if not item.get("url"):
             continue
-        body = get_page_content(item["url"])
+        body = crawl_page(item["url"], max_chars)
         logger.info(f"获取到页面内容: {body}")
         enriched_results.append(
             {
@@ -78,6 +61,24 @@ def google_search(query: str, num_results: int = 2, max_chars: int = 500):
         time.sleep(1)  # Be respectful to the servers
 
     return enriched_results
+
+
+def crawl_page(url: str, max_chars: int = 500):
+    try:
+        response = requests.get(url, timeout=10)
+        soup = BeautifulSoup(response.content, "html.parser")
+        text = soup.get_text(separator=" ", strip=True)
+        words = text.split()
+        content = ""
+        for word in words:
+            if len(content) + len(word) + 1 > max_chars:
+                break
+            content += " " + word
+        return content.strip()
+    except Exception as e:
+        print(f"Error fetching {url}: {str(e)}")
+        logger.error(f"Error fetching {url}: {str(e)}")
+        return ""
 
 
 def cover_image(prompt: str):
@@ -94,6 +95,11 @@ def cover_image(prompt: str):
 google_search_tool = FunctionTool(
     google_search,
     description="Search Google for information, returns results with a snippet and body content",
+)
+
+crawl_page_tool = FunctionTool(
+    crawl_page,
+    description="Crawl a web page and return its content",
 )
 
 cover_image_tool = FunctionTool(
@@ -119,27 +125,40 @@ keywords_agent = AssistantAgent(
     "keywords_agent",
     model_client=model_client,
     description="A helpful assistant that can extract keywords from news articles.",
-    system_message="You are a helpful assistant that can extract relevant keywords from the provided news article to summarize its main points.",
+    system_message=(
+        "You are a helpful assistant that extracts the most relevant and representative keywords from the provided news article. "
+        "Focus only on the main content and core topics of the article. "
+        "Avoid extracting generic words, unrelated recommendations, or keywords from unrelated news or advertisements. "
+        "Return a concise list of keywords that best summarize the main points of the article."
+    ),
 )
 
 cover_agent = AssistantAgent(
     "cover_agent",
     model_client=model_client,
-    description="A helpful assistant that can generate a cover image for the news article.",
-    system_message="You are a text2Image assistant that can generate image prompts for the news article. "
-    "You should provide a detailed prompt for the image generation model to create a cover image for the article."
-    "The prompt should be in the format of a single sentence, describing the main theme of the article."
-    "The prompt should be in English."
-    "Then you should invoke cover_tool to generate the image.",
+    description="A helpful assistant that can choose a cover or generate a cover image for the news article.",
+    system_message=(
+        "You are a text2Image assistant that selects or generates a cover image prompt for the news article. "
+        "First, check if the article contains a mediaFiles field with at least one valid image URL. "
+        "If mediaFiles[0] exists and is a valid image, use it directly as the cover and do not generate a new image. "
+        "If not, provide a detailed prompt in English (one sentence, describing the main theme of the article) for the image generation model, "
+        "then invoke cover_tool to generate the image."
+    ),
     tools=[cover_image_tool],
 )
 
 search_agent = AssistantAgent(
     "search_agent",
     model_client=model_client,
-    tools=[google_search_tool],
+    tools=[google_search_tool, crawl_page_tool],
     description="A web search agent.",
-    system_message="You are a web search agent. Your only tool is search_tool - use it to find information. You make only one search call at a time. Once you have the results, you never do calculations based on them.",
+    system_message=(
+        "You are a web search agent. "
+        "First, scan the article for valid URLs. "
+        "If you find a URL that is relevant to the article's topic, use the crawl_page tool to get its content directly. "
+        "If there are no relevant URLs, use keywords from the article to perform a web search with the search tool. "
+        "You make only one tool call at a time."
+    ),
 )
 
 
@@ -157,6 +176,7 @@ summary_agent = AssistantAgent(
     system_message="You are a helpful assistant that can summarize the news article. You should provide a concise summary of the main points of the article in 200 words or less.",
 )
 
+
 report_agent = AssistantAgent(
     "report_agent",
     model_client=model_client,
@@ -168,7 +188,7 @@ report_agent = AssistantAgent(
         "cn": {
                 "title": "string",
                 "summary": "string",
-                "content": "string"
+                "content": "string",
                 "cover_prompt": "string",
                 "cover": "string",
                 "categories": ["string"],
@@ -200,8 +220,9 @@ report_agent = AssistantAgent(
     }
     ```
 
-    The `content` should be a detailed summary of the article, including the main points and any relevant information, and should be in the format of markdown.
-    Provide the report with all fields populated based on the article content. Ensure the content is accurate and well-structured. 
+    The `content` field must be a detailed summary of the article, including only the main points and relevant information, and must be in markdown format. 
+    Do not include any recommendations, advertisements, unrelated news, or other extraneous information in the content.
+    Provide the report with all fields populated based on the article content. Ensure the content is accurate, well-structured, and focused on the core of the article.
     When you are done, you must respond with TERMINATE.""",
 )
 
