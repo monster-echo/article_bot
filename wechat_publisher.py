@@ -1,3 +1,4 @@
+import html
 import os
 import json
 import requests
@@ -316,7 +317,7 @@ def process_article_content(content, image_urls=None):
     # 替换图片URL
     for old_url in image_urls:
         try:
-            download_url = old_url
+            download_url = html.unescape(old_url)
             # 跳过已经是微信域名的图片
             if "mmbiz.qpic.cn" in download_url:
                 logger.info(f"跳过已经是微信域名的图片: {download_url}")
