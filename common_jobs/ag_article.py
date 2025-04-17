@@ -74,6 +74,8 @@ def crawl_page(url: str, max_chars: int = 500):
             if len(content) + len(word) + 1 > max_chars:
                 break
             content += " " + word
+
+        logger.info(f"crawl_page 获取到页面内容: {content}")
         return content.strip()
     except Exception as e:
         print(f"Error fetching {url}: {str(e)}")
@@ -176,7 +178,6 @@ summary_agent = AssistantAgent(
     system_message="You are a helpful assistant that can summarize the news article. You should provide a concise summary of the main points of the article in 200 words or less.",
 )
 
-
 report_agent = AssistantAgent(
     "report_agent",
     model_client=model_client,
@@ -220,8 +221,9 @@ report_agent = AssistantAgent(
     }
     ```
 
-    The `content` field must be a detailed summary of the article, including only the main points and relevant information, and must be in markdown format. 
+    The `content` field must be a clear summary of the main points of the article, written in one or two paragraphs in markdown format. 
     Do not include any recommendations, advertisements, unrelated news, or other extraneous information in the content.
+    You do not need to enumerate points as first, second, etc.—just summarize the core content concisely and clearly.
     Provide the report with all fields populated based on the article content. Ensure the content is accurate, well-structured, and focused on the core of the article.
     When you are done, you must respond with TERMINATE.""",
 )
