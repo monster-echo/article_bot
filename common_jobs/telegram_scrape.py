@@ -8,6 +8,7 @@ from common_jobs.base import CommonJobBase
 from telethon.tl.types import PeerChannel
 from config import AISTUDIOX_API_URL
 from utils.appdata import app_data
+import socks
 
 
 # 保存和加载last_message_id的文件路径
@@ -127,7 +128,7 @@ class TelegramScrapeJob(CommonJobBase):
         self.logger.info(f"已更新频道 {channel} 的最后消息ID为 {last_message_id}")
 
         for message in grouped_messages:
-            self.logger.info(f"正在处理分组消息 {message['groupedId']}")
+            self.logger.info(f"正在处理分组消息 {channel_username}")
             await self.addNewMessage(message)
 
         self.logger.info(f"同步 {channel} 完成，处理了 {len(grouped_messages)} 条消息")
@@ -152,11 +153,7 @@ class TelegramScrapeJob(CommonJobBase):
                 continue
 
     async def start(self):
-        async with TelegramClient(
-            self.db,
-            os.environ.get("TELEGRAM_API_ID"),
-            os.environ.get("TELEGRAM_API_HASH"),
-        ) as client:
+        async with self.get_client() as client:
             self.logger.info("开始同步 Telegram 频道")
             client.start()
             self.logger.info("同步 Telegram 频道成功")
@@ -166,12 +163,7 @@ class TelegramScrapeJob(CommonJobBase):
             raise Exception("请先登录 Telegram")
 
         try:
-            async with TelegramClient(
-                self.db,
-                os.environ.get("TELEGRAM_API_ID"),
-                os.environ.get("TELEGRAM_API_HASH"),
-            ) as client:
-
+            async with self.get_client() as client:
                 self.logger.info("开始同步 Telegram 频道")
                 await self.sync_channels(client)
                 self.logger.info("同步 Telegram 频道成功")
@@ -199,3 +191,30 @@ class TelegramScrapeJob(CommonJobBase):
         except Exception as e:
             self.logger.error(f"保存last_messages文件失败: {e}")
             raise e
+
+    def get_client(self):
+        """获取Telegram客户端"""
+
+        proxy_url = os.environ.get("TELEGRAM_PROXY", None)
+        if proxy_url:
+            schema = proxy_url.split("://")[0]
+            type = [socks.SOCKS5, socks.HTTP][schema == "http"]
+            host = proxy_url.split("://")[1].split(":")[0]
+            port = int(proxy_url.split("://")[1].split(":")[1])
+            proxy = (type, host, port)
+        else:
+            proxy = None
+
+        return TelegramClient(
+            self.db,
+            os.environ.get("TELEGRAM_API_ID"),
+            os.environ.get("TELEGRAM_API_HASH"),
+            proxy=proxy,
+        )
+
+    async def list_channels(self):
+        async with self.get_client() as client:
+            self.logger.info("列出所有频道")
+            async for dialog in client.iter_dialogs():
+                if dialog.id != 777000:
+                    self.logger.info(f"* {dialog.title} (id: {dialog.id})")
