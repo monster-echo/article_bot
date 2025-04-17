@@ -127,7 +127,7 @@ class TelegramScrapeJob(CommonJobBase):
         self.logger.info(f"已更新频道 {channel} 的最后消息ID为 {last_message_id}")
 
         for message in grouped_messages:
-            self.logger.info(f"正在处理分组消息 {message['channel_username']}")
+            self.logger.info(f"正在处理分组消息 {channel_username}")
             await self.addNewMessage(message)
 
         self.logger.info(f"同步 {channel} 完成，处理了 {len(grouped_messages)} 条消息")
