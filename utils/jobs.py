@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import logging
 import asyncio
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,29 @@ def add_jobs(scheduler, class_types, stagger_start=True, initial_delay=0):
         initial_delay: 初始延迟时间(分钟),默认为 0
     """
     logger.info("开始添加任务")
+    whitelist = [
+        name.strip()
+        for name in os.environ.get("WHITE_LIST", "").split(",")
+        if name.strip()
+    ]
+    blacklist = [
+        name.strip()
+        for name in os.environ.get("BLACK_LIST", "").split(",")
+        if name.strip()
+    ]
+
+    logger.info(f"白名单: {whitelist}")
+    logger.info(f"黑名单: {blacklist}")
+
     for idx, _class in enumerate(class_types):
+        job_name = _class.__name__
+        if whitelist and job_name not in whitelist:
+            logger.info(f"跳过不在白名单中的任务: {job_name}")
+            continue
+        if blacklist and job_name in blacklist:
+            logger.info(f"跳过在黑名单中的任务: {job_name}")
+            continue
+
         if hasattr(_class, "interval") and hasattr(_class, "run"):
             add_job(scheduler, _class, stagger_start, initial_delay, idx)
         else:
