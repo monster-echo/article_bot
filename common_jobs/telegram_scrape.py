@@ -72,6 +72,9 @@ class TelegramScrapeJob(CommonJobBase):
             offset_date=datetime.now() - timedelta(days=7),
             reverse=True if last_message_id else False,
         ):
+            if message.id > last_message_id:
+                last_message_id = message.id
+
             self.logger.info(f"获取 {channel} 消息: {message.id} - {message.text}")
             file_path = await message.download_media(tempfile.gettempdir())
             self.logger.info(f"Downloaded media for message {message.id} {file_path}")
