@@ -8,3 +8,4 @@ autogen_agentchat
 autogen_ext[openai]
 bs4
 telethon
+socks
