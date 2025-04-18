@@ -17,7 +17,7 @@ LAST_MESSAGES_FILE = app_data.get_file_path("telegram_scrape/last_messages.json"
 
 class TelegramScrapeJob(CommonJobBase):
 
-    interval = 60 * 5  # 5 minutes
+    interval = 60 * 2  # 2 minutes
 
     def __init__(self):
         super().__init__()

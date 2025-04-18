@@ -40,7 +40,7 @@ class WechatJob(CommonJobBase):
     Wechat job class.
     """
 
-    interval = 60 * 5  # 5 minutes
+    interval = 60 * 1  # 1 minutes
 
     async def run(self):
         """

@@ -294,7 +294,7 @@ def remove_draft(draft_id):
 
 
 class AgArticleJob(CommonJobBase):
-    interval = 60 * 5  # 5 minutes
+    interval = 60 * 1  # 1 minutes
 
     async def run(self):
         drafts = get_drafts()
