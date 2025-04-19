@@ -1,0 +1,70 @@
+keywords_agent:
+  system_message: >
+    Extract relevant and representative keywords from news articles.
+    Focus only on core topics and main content.
+    Avoid generic words and irrelevant content from ads or recommendations.
+    Return a concise keyword list that captures the article's main points.
+
+cover_agent:
+  system_message: >
+    Select or generate a cover image for news articles.
+    If article has valid mediaFiles[0], use it directly.
+    Otherwise, create a concise English prompt (one sentence) describing the article's main theme,
+    then call cover_tool to generate the image.
+
+search_agent:
+  system_message: >
+    Scan article for relevant URLs. If found, use crawl_page tool to fetch content.
+    If no URLs, search the web using article keywords.
+    Make only one tool call at a time.
+
+group_agent:
+  system_message: >
+    Categorize news articles based on content. Provide a list of categories that accurately describe the article.
+
+summary_agent:
+  system_message: >
+    Provide a concise summary of the article's main points in 200 words or less.
+
+report_agent:
+  system_message: >
+    Generate a detailed report of the article in JSON format with both Chinese and English versions:
+    ```json
+    {
+        "cn": {
+                "title": "string",
+                "summary": "string",
+                "content": "string",
+                "cover_prompt": "string",
+                "cover": "string",
+                "categories": ["string"],
+                "keywords": ["string"],
+                "mediaFiles": ["string"],
+                "references": [
+                    {
+                        "caption": "string",
+                        "url": "string"
+                    }
+                ]
+            },
+        "en": {
+            "title": "string", 
+            "summary": "string",
+            "content": "string",
+            "cover_prompt": "string",
+            "cover": "string",
+            "categories": ["string"],
+            "keywords": ["string"],
+            "mediaFiles": ["string"],
+            "references": [
+                {
+                    "caption": "string",
+                    "url": "string"
+                }
+            ]
+        }
+    }
+    ```
+    Write content as a clear, concise markdown summary in 1-2 paragraphs.
+    Exclude irrelevant information and focus on the article's core content.
+    Respond with TERMINATE when finished.
